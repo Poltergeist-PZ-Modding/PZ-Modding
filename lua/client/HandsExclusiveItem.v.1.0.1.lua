@@ -1,29 +1,29 @@
---[[        \<.<\        ┏(-Д-┏)～        ]]
 --[[
     Author Poltergeist
-    module for using special item that only exists in player hands
+    module for using special items that only exist in the player hands
+
+    https://github.com/Poltergeist-PZ-Modding/PZContentVault/blob/main/lua
 --]]
+--[[        \<.<\        ┏(-Д-┏)～        ]]
 
-local self
+local self = { version = "1.0.1" }
 
-do
-    local version = "1.0.0"
-    local __version = __HandsExclusiveItem and __HandsExclusiveItem.version
-    if __HandsExclusiveItem ~= nil then
-        local split1 = version:split("\\.")
-        local split2 = __version:split("\\.")
-        if tonumber(split1[1]) > tonumber(split2[1]) or tonumber(split1[2]) > tonumber(split2[2]) or tonumber(split1[3]) > tonumber(split2[3]) then
-            __version = nil
-        end
+-----------------------------------------------------------------------------------------------------------------------
+--Version check (major,minor,patch numeric values)
+
+if __HandsExclusiveItem ~= nil then
+    local split1 = self.version:split("\\.")
+    local split2 = __HandsExclusiveItem.version:split("\\.")
+    if tonumber(split1[1]) < tonumber(split2[1]) or tonumber(split1[2]) < tonumber(split2[2]) or tonumber(split1[3]) < tonumber(split2[3]) then
+        self = nil
+        return
     end
-
-    if __version then return end
-    self = { version = version }
-    __HandsExclusiveItem = self
 end
 
-function self.OnTick()
-    Events.OnTick.Remove(self.OnTick)
+-----------------------------------------------------------------------------------------------------------------------
+
+function self.initialize()
+    Events.OnTick.Remove(self.initialize)
 
     if __HandsExclusiveItem ~= self then return end
 
@@ -52,4 +52,6 @@ function self.OnTick()
 
 end
 
-Events.OnTick.Add(self.OnTick)
+Events.OnTick.Add(self.initialize)
+
+__HandsExclusiveItem = self
